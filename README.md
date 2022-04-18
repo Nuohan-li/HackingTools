@@ -6,8 +6,8 @@
    -t to specify a single IP address or use an IP subnet prefix
  
 - ARP Spoofing <br>
-  -i [target IP address] -r [router IP address
+  -i [target IP address] -r [router IP address]
 
 - Sniffer: Captures the packets going through this computer and save them to a pcap file for analysis <br>
-  -i [interface] -n [file name
+  -i [interface] -n [file name]
   
