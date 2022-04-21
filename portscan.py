@@ -28,14 +28,19 @@ else:
 
 # creating a socket and try to connect to every single port of the target to determine which port on target machine is
 # open, and what service is running on that port
+
+def get_info(sock):
+    return sock.recv(1024).decode().strip('\n').strip('r')
+
 for port in range(1, ports):
+    sock = socket.socket()
+    sock.settimeout(0.5)
     try:
-        sock = socket.socket()
         sock.connect((options.target_ip, port)) 
-        print("open port: " + str(port) + "   " + "service: " + socket.getservbyport(port, protocol))   
+        print("open port: " + str(port) + "   " + "service: " + socket.getservbyport(port, protocol))
         sock.close()
-    except socket.error:
-        print("unable to connect to this address")
+    except socket.timeout:
+        print("Timeout... Unable to connect to this address")
         quit()
     except Exception:
         pass
