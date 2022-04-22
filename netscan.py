@@ -1,3 +1,4 @@
+import time
 import scapy.all as scapy
 import optparse
 import requests
@@ -30,11 +31,12 @@ answered_packets = scapy.srp(arp_broadcast, timeout=1)[0]
 # response is Ether / ARP who has 192.168.2.133 says 192.168.2.145 ==> Ether / ARP is at 00:0c:29:99:e9:2d says 192.168.2.133 / Padding
 print(answered_packets.show())
 # getting the ARP response and getting the target IP address and MAC address, also display the result
-print('------------------------------------------------------')
-print(' IP Address\t\t\tMAC Address')
-print('------------------------------------------------------')
+print('---------------------------------------------------------------------------------------------')
+print(' IP Address\t\t\tMAC Address\t\t\tVendor')
+print('---------------------------------------------------------------------------------------------')
 for element in answered_packets:
     # print(element)
-    # vendor = requests.get('http://api.macvendors.com/' + element[1].hwsrc).text
-    print(' ' + element[1].psrc + '\t\t\t' + element[1].hwsrc)
-    print('------------------------------------------------------')
+    time.sleep(1)
+    vendor = requests.get('http://api.macvendors.com/' + element[1].hwsrc).text
+    print(' ' + element[1].psrc + '\t\t\t' + element[1].hwsrc + '\t\t' + vendor)
+    print('---------------------------------------------------------------------------------------------')
