@@ -5,6 +5,7 @@ from misc import *
 
 arg_port = ''
 arg_host_ip = ''
+arg_range = ''
 try:
     opts, args = getopt.getopt(sys.argv[1:], "p:i:", ["port=", "host_ip="])
 except:
@@ -16,7 +17,8 @@ for opt,arg in opts:
         arg_port = int(arg)
     elif opt in ("-i", "--ip"):
         arg_host_ip = arg.replace(" ", "")
-    
+    elif opt in ("-r", "--range"):
+        arg_range = arg
 
 
 socket1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
