@@ -8,7 +8,7 @@ parser.add_option('-p', dest='protocol', help="enter the protocol you are scanni
 parser.add_option('-r', dest='ports', help="enter how many ports do you want to scan, default = 65535")
 (options, arg) = parser.parse_args()
 
-ports = 0
+ports = 1
 protocol = ""
 
 # force user to enter an IP address
@@ -28,9 +28,6 @@ else:
 
 # creating a socket and try to connect to every single port of the target to determine which port on target machine is
 # open, and what service is running on that port
-
-def get_info(sock):
-    return sock.recv(1024).decode().strip('\n').strip('r')
 
 for port in range(1, ports):
     sock = socket.socket()

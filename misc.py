@@ -14,3 +14,6 @@ def log_warning(msg=""):
 
 def log_error(msg=""):
     print('|' + now + '| ERROR: ' + colored(msg, 'red'))
+
+def log_notice(msg=""):
+    print('|' + now + '| NOTICE: ' + colored(msg, 'magenta'))
