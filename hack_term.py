@@ -26,10 +26,9 @@ while(True):
                     log_error("You must provide an IP address")
                 else:
                     break
-                    
-
+                
             protocol = input(">>> Enter the protocol the port is running, default is TCP: ")
-            ports = input(">>> Enter the number of ports to scan: ")
+            ports = input(">>> Enter the number of ports to scan, default scans all ports: ")
             
             subprocess.call(['python', 'portscan.py', '-p', str(protocol), '-i', str(ip), '-r', str(ports)])
 

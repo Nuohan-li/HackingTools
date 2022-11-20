@@ -1,5 +1,6 @@
 import optparse
 import socket
+from misc import *
 
 # add options 
 parser = optparse.OptionParser()
@@ -30,17 +31,22 @@ else:
 # open, and what service is running on that port
 
 for port in range(1, ports):
-    sock = socket.socket()
-    sock.settimeout(0.5)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(2)
     try:
         sock.connect((options.target_ip, port)) 
-        print("open port: " + str(port) + "   " + "service: " + socket.getservbyport(port, protocol))
+        try:
+            banner = sock.recv(4096).decode().strip('\n')
+        except socket.timeout:
+            continue
+        # print("info" + info)
+        log_info("open port: " + str(port) + "   " + "service: " + socket.getservbyport(port, protocol) + " banner: " + banner )
         sock.close()
     except socket.timeout:
-        print("Timeout... Unable to connect to this address")
+        log_error("Timeout... Unable to connect to this address")
         quit()
     except Exception:
         pass
 
-print("ports scanned")
+log_notice(f"{ports} ports scanned")
 
