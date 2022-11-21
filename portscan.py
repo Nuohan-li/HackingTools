@@ -1,7 +1,6 @@
 import optparse
 import socket
 from misc import *
-import tqdm
 
 # add options 
 parser = optparse.OptionParser()

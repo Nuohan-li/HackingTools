@@ -1,18 +1,5 @@
 import subprocess
-import os
-import platform
-import socket
-import time
 from misc import * 
-
-path = '/'
-host_name = socket.gethostname()
-host_ip = socket.gethostbyname(host_name)
-
-def ping(host, count):
-    param = '-n' if platform.system().lower == 'windows' else '-c'
-    command = ['ping', param, count, host]
-    return subprocess.call(command)
 
 print("Hack Terminal")
 while(True):
@@ -31,4 +18,37 @@ while(True):
             ports = input(">>> Enter the number of ports to scan, default scans all ports: ")
             
             subprocess.call(['python', 'portscan.py', '-p', str(protocol), '-i', str(ip), '-r', str(ports)])
+        
+        case "ssh_brute_force":
+            log_info("SSH brute forcer selected")
+            while(True):
+                host = input(">>> Enter target IP address: ")
+                if host == "":
+                    log_error("You must provide target IP address")
+                else: 
+                    break
+            while(True):
+                username = input(">>> Enter username: ")
+                if username == "":
+                    log_error("You must provide username")
+                else: 
+                    break
+            while(True):
+                file_location = input(">>> Enter password file location: ")
+                if file_location == "":
+                    log_error("You must provide file location")
+                else: 
+                    break
+            subprocess.call(['python', 'ssh_brute_force.py', '-i', str(host), '-u', str(username), '-f', str(file_location)])
+
+        case "ftp_anonymous":
+            log_info("Check if host host has FTP anonymous login enabled")
+            while(True):
+                host = input(">>> Enter target IP address: ")
+                if host == "":
+                    log_error("You must provide target IP address")
+                else:
+                    break
+            subprocess.call(['python', 'ftp_anonymous.py', '-i', str(host)])
+
 
