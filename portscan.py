@@ -1,6 +1,7 @@
 import optparse
 import socket
 from misc import *
+import tqdm
 
 # add options 
 parser = optparse.OptionParser()
@@ -33,6 +34,7 @@ else:
 for port in range(1, ports):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(2)
+    progress(port, ports)
     try:
         sock.connect((options.target_ip, port)) 
         try:
@@ -48,5 +50,5 @@ for port in range(1, ports):
     except Exception:
         pass
 
-log_notice(f"{ports} ports scanned")
+log_notice(f"Complete. {ports} ports scanned")
 
