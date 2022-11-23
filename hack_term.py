@@ -61,4 +61,40 @@ while(True):
                     break
             subprocess.call(['python', 'ftp_brute_force.py', '-i', str(host), '-f', str(file_location)])
 
+        case "hasher":
+            log_info("Password hasher selected")
+            subprocess.call(['python', 'hasher.py'])
+        
+        case "password_cracker":
+            log_info("Password cracker selected")
+            while(True):
+                hashed = input(">>> Enter a hashed password: ")
+                if hashed == "":
+                    log_error("You must provide a hashed password")
+                else: 
+                    break
+            while(True):
+                hash_algo = input(">>> Enter a hashing algorithm: ")
+                if hash_algo == "":
+                    log_error("You must provide a hashing algorithm")
+                else: 
+                    break
+            subprocess.call(['python', 'password_cracker.py', '-p', hashed, '-a', hash_algo])
+        
+        case "MAC_changer":
+            log_info("interface MAC address changer selected")
+            while(True):
+                interface = input(">>> Enter an interface: ")
+                if interface == "":
+                    log_error("You must provide a interface whose MAC address you wish to change")
+                else: 
+                    break
+            while(True):
+                mac = input(">>> Enter the new MAC address: ")
+                if mac == "":
+                    log_error("You must provide a new MAC address")
+                else: 
+                    break
+            subprocess.call(['python', 'MAC_changer.py', '-i', interface, '-m', mac])
+
 
