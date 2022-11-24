@@ -10,10 +10,10 @@ def icmp_packet(**kwargs):
 
     host_name = socket.gethostname()
     # **kwargs returns key value pairs, need to check and set up default value manually
-    ttl = 64
+    ttl = kwargs.get("ttl", 64)
     src = socket.gethostbyname(host_name)
-    dst = "192.168.1.87"
-    data_size = 1000
+    dst = kwargs.get("dst", "192.168.1.87")
+    data_size = kwargs.get("data_size", 1000)
     data = RandString(size=data_size)
     
     packet = IP()/ICMP()/Raw(data)
@@ -21,6 +21,42 @@ def icmp_packet(**kwargs):
     packet.dst = dst
     packet.ttl = ttl
     packet.show2()
+    return packet
+
+
+def arp_packet(**kwargs):
+    
+    packet = Ether()
+    packet.hwdst = kwargs.get("dst", "ff:ff:ff:ff:ff:ff")
+    packet.hwsrc = kwargs.get("src", "08:00:27:22:46:4f")
+    packet.type = 0x806
+
+    arp_content = ARP()
+    arp_content.pdst = kwargs.get("pdst", "10.0.0.1")
+    arp_content.psrc = kwargs.get("psrc", "10.0.0.184")
+    arp_content.op = kwargs.get("op", 1)
+
+    packet = packet/arp_content
+    # packet.show2()
+    return packet
+    # answer = send(packet)
+    # print(answer)
+    # print(answer[0].show())
+    # answer[0][0][1].show()
+
+
+def syn_flood_packet(**kwargs):
+    IPlayer = IP()
+    IPlayer.src = kwargs.get("src", socket.gethostbyname(socket.gethostname()))
+    IPlayer.dst = kwargs.get("dst")
+
+    TCPlayer = TCP()
+    TCPlayer.dport = kwargs.get("dport")
+    # TCPlayer.sport = kwargs.get("sport")
+    
+    rawlayer = Raw()
+    rawlayer.load = RandString(size = kwargs.get("size"))
+    packet = IPlayer/TCPlayer/rawlayer
     return packet
 
 
@@ -34,9 +70,8 @@ def send_packet(packet, count=1):
         i += 1
 
 
-def get_mac_addr():
-    pass
 
-
-send_packet(icmp_packet(data_size=80000, dst="192.168.1.30"), 10)
+arp_packet()
+# icmp_packet(data_size=10000, dst="192.168.1.30")
+# send_packet(icmp_packet(data_size=80000, dst="192.168.1.30"), 10)
 # icmp_packet()

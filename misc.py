@@ -7,20 +7,20 @@ import sys
 
 now = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
 
-def log_info(msg=""):
-    print('|' + now + '| INFO   : ' + colored(msg, 'green'))
+def log_info(msg="", end='\n'):
+    print('|' + now + '| INFO   : ' + colored(msg, 'green'), end=end)
 
-def log_debug(msg=""):
-    print('|' + now + '| DEBUG  : ' + colored(msg, 'cyan'))
+def log_debug(msg="", end='\n'):
+    print('|' + now + '| DEBUG  : ' + colored(msg, 'cyan'), end=end)
 
-def log_warning(msg=""):
-    print('|' + now + '| WARNING: ' + colored(msg, 'yellow'))
+def log_warning(msg="", end='\n'):
+    print('|' + now + '| WARNING: ' + colored(msg, 'yellow'), end=end)
 
-def log_error(msg=""):
-    print('|' + now + '| ERROR  : ' + colored(msg, 'red'))
+def log_error(msg="", end='\n'):
+    print('|' + now + '| ERROR  : ' + colored(msg, 'red'), end=end)
 
-def log_notice(msg=""):
-    print('|' + now + '| NOTICE : ' + colored(msg, 'magenta'))
+def log_notice(msg="", end='\n'):
+    print('|' + now + '| NOTICE : ' + colored(msg, 'magenta'), end=end)
 
 def progress(progress, total):
     percent = 100 * (progress / float(total))

@@ -47,4 +47,3 @@ if current_MAC.group(0).upper() == options.MAC.upper():
     log_info('MAC address has been changed')
 else:
     log_error('Error, MAC could not be changed')
-# subprocess.call('ifconfig ', shell=True)
