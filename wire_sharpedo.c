@@ -8,7 +8,7 @@
 
 
 int main(){
-    int sock_raw = socket(AF_PACKET, SOCK_RAW, IPPROTO_TCP);
+    int sock_raw = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
     int test_sock = socket(AF_INET, SOCK_STREAM, 0);
     printf("%d\n", test_sock);
     printf("%d\n", sock_raw);

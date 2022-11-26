@@ -1,6 +1,7 @@
 from scapy.all import *
 import optparse
 import socket 
+import binascii
 from struct import *
 from misc import *
 
@@ -32,26 +33,37 @@ def write_to_pacp(pcap_path, packet):
     wrpcap(pcap_path, packet, append=True)
 
 
+def dump_data(packet):
+    char_count = 0
+    packet_hex_str = str(packet.hex()) 
+    for hex_char in packet_hex_str:
+        if char_count <= 15:
+            print(hex_char + " ", end="")
+            char_count += 1
+        else:
+            print('')
+            char_count = 0
+
+
 
 counter = 1
+ether_length = 14
 while 1:
     # receive packet from all 65535 ports
     packet = sock.recvfrom(65535)
     packet = packet[0]
     write_to_pacp("test1.pcap", packet)
-    # print("packet is " + str(packet) + '\n')
-    ether_length = 14
+    dump_data(packet)
     ether_header = packet[:ether_length]
-    # print(ether_header)
     # https://docs.python.org/3/library/struct.html -> unpack format
     # since dst and src MAC are 6 bytes = 6 s -> 6 bytes string, split into 2 char array of 6 bytes (MAC) and a unsigned short  
     ether = unpack('!6s6sH', ether_header)
-    # print(ether)
     ether_type = hex(ether[2]).zfill(4)
     ether_type1 = "0x" + "{:04x}".format(ether[2])
     dst_MAC = ether[0].hex()
     src_MAC = ether[1].hex()
-    print(f"packet {counter}: Destination MAC: {format_mac(dst_MAC)}, Source MAC: {format_mac(src_MAC)}, Ether type: {ether_type1}")
+    packet_size = len(str(packet.hex())) / 2
+    print(f"\npacket {counter}: packet size: {packet_size} Destination MAC: {format_mac(dst_MAC)}, Source MAC: {format_mac(src_MAC)}, Ether type: {ether_type1}")
     counter += 1
 
 
