@@ -1,7 +1,6 @@
 from scapy.all import *
 import optparse
 import socket 
-import binascii
 from struct import *
 from misc import *
 
@@ -36,9 +35,14 @@ def write_to_pacp(pcap_path, packet):
 def dump_data(packet):
     char_count = 0
     packet_hex_str = str(packet.hex()) 
+    print(packet_hex_str)
     for hex_char in packet_hex_str:
-        if char_count <= 15:
-            print(hex_char + " ", end="")
+        if char_count <= 31:
+            print(hex_char, end="")
+            if char_count % 2 == 1:   # print a space for every two hex char, so we want char at index 0 and 1 "space" 2 and 3 "space"... counter after every 2 index mod 2 is 1
+                print(" ", end="")
+            if char_count == 15:      # print an extra space in middle 
+                print(" ", end="")   
             char_count += 1
         else:
             print('')
@@ -53,7 +57,6 @@ while 1:
     packet = sock.recvfrom(65535)
     packet = packet[0]
     write_to_pacp("test1.pcap", packet)
-    dump_data(packet)
     ether_header = packet[:ether_length]
     # https://docs.python.org/3/library/struct.html -> unpack format
     # since dst and src MAC are 6 bytes = 6 s -> 6 bytes string, split into 2 char array of 6 bytes (MAC) and a unsigned short  
@@ -64,6 +67,8 @@ while 1:
     src_MAC = ether[1].hex()
     packet_size = len(str(packet.hex())) / 2
     print(f"\npacket {counter}: packet size: {packet_size} Destination MAC: {format_mac(dst_MAC)}, Source MAC: {format_mac(src_MAC)}, Ether type: {ether_type1}")
+    dump_data(packet)
+    print('\n')
     counter += 1
 
 
