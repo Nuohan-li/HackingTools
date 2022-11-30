@@ -34,10 +34,8 @@ def write_to_pacp(pcap_path, packet):
 
 def dump_data(packet):
     char_count = 0
-    packet_hex_str = str(packet.hex()) 
-    print(packet_hex_str)
-    for hex_char in packet_hex_str:
-        if char_count <= 31:
+    for hex_char in packet:
+        if char_count <= 30:           
             print(hex_char, end="")
             if char_count % 2 == 1:   # print a space for every two hex char, so we want char at index 0 and 1 "space" 2 and 3 "space"... counter after every 2 index mod 2 is 1
                 print(" ", end="")
@@ -45,9 +43,34 @@ def dump_data(packet):
                 print(" ", end="")   
             char_count += 1
         else:
-            print('')
+            print(hex_char)
             char_count = 0
 
+    # every time when char_count reaches 31 it skips a char
+
+def get_eth_header(packet, header_length):
+    ether_header = packet[:header_length]
+    # https://docs.python.org/3/library/struct.html -> unpack format
+    # since dst and src MAC are 6 bytes = 6 s -> 6 bytes string, split into 2 char array of 6 bytes (MAC) and a unsigned short  
+    ether = unpack('!6s6sH', ether_header)
+    ether_type = "0x" + "{:04x}".format(ether[2])
+    dst_MAC = ether[0].hex()
+    src_MAC = ether[1].hex()
+    data = packet[header_length:]
+    packet_size = len(str(packet.hex())) / 2
+    return dst_MAC, src_MAC, ether_type, data, packet_size
+
+def get_IP_header(L3_data):
+    version_IHL = L3_data[0]
+    version = version_IHL >> 4
+    # AND with decimal 15 -> 00001111
+    IHL = (version_IHL & 15) * 4 
+    rest_of_header = L3_data[1:20]
+    TOS = rest_of_header[0]
+    total_length = rest_of_header[1:3].hex()
+
+
+    print(f"version={version} IHL={IHL} TOS={TOS} total length={total_length}")
 
 
 counter = 1
@@ -57,17 +80,13 @@ while 1:
     packet = sock.recvfrom(65535)
     packet = packet[0]
     write_to_pacp("test1.pcap", packet)
-    ether_header = packet[:ether_length]
-    # https://docs.python.org/3/library/struct.html -> unpack format
-    # since dst and src MAC are 6 bytes = 6 s -> 6 bytes string, split into 2 char array of 6 bytes (MAC) and a unsigned short  
-    ether = unpack('!6s6sH', ether_header)
-    ether_type = hex(ether[2]).zfill(4)
-    ether_type1 = "0x" + "{:04x}".format(ether[2])
-    dst_MAC = ether[0].hex()
-    src_MAC = ether[1].hex()
-    packet_size = len(str(packet.hex())) / 2
-    print(f"\npacket {counter}: packet size: {packet_size} Destination MAC: {format_mac(dst_MAC)}, Source MAC: {format_mac(src_MAC)}, Ether type: {ether_type1}")
-    dump_data(packet)
+    print(f"\npacket {counter}: packet size: {get_eth_header(packet,ether_length)[4]}\
+        Destination MAC: {format_mac(get_eth_header(packet,ether_length)[0])}\
+        Source MAC: {format_mac(get_eth_header(packet,ether_length)[1])}\
+        Ether type: {get_eth_header(packet,ether_length)[2]}\n \
+        data: {get_eth_header(packet,ether_length)[3]}")
+    get_IP_header(get_eth_header(packet,ether_length)[3])
+    dump_data(str(packet.hex()))
     print('\n')
     counter += 1
 
