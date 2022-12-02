@@ -25,7 +25,7 @@ def format_mac(mac):
             counter += 1
         else:
             mac_addr += m1+m2
-    return mac_addr
+    return mac_addr    
 
 
 def write_to_pacp(pcap_path, packet):
@@ -67,10 +67,31 @@ def get_IP_header(L3_data):
     IHL = (version_IHL & 15) * 4 
     rest_of_header = L3_data[1:20]
     TOS = rest_of_header[0]
-    total_length = rest_of_header[1:3].hex()
+    DSCP = TOS >> 2
+    DSCP = hex(DSCP)
+    ECN = TOS & 3
+    ECN = hex(ECN)
+    TOS = hex(TOS)
+    #TODO: change total_length, identification, protocol to int
+    total_length = int.from_bytes(rest_of_header[1:3], "big")
+    identification = int.from_bytes(rest_of_header[3:5], "big")
+    flgas_fragment_offset_byte = int.from_bytes(rest_of_header[5:7], "big")
+    flag = flgas_fragment_offset_byte >> 13
+    flag = hex(flag)
+    fragment_offset = flgas_fragment_offset_byte & 8191
+    fragment_offset = hex(fragment_offset)
+    flgas_fragment_offset_byte = hex(flgas_fragment_offset_byte)
+    TTL = rest_of_header[7:8].hex()
+    protocol = int.from_bytes(rest_of_header[8:9], "big")
+    cksum = rest_of_header[9:11].hex()
+
+    src_IP = str(rest_of_header[11]) + "." + str(rest_of_header[12]) + "." + str(rest_of_header[13]) + "." + str(rest_of_header[14]) 
+    dst_IP = str(rest_of_header[15]) + "." + str(rest_of_header[16]) + "." + str(rest_of_header[17]) + "." + str(rest_of_header[18]) 
 
 
-    print(f"version={version} IHL={IHL} TOS={TOS} total length={total_length}")
+    print(f"version={version} IHL={IHL} TOS= {TOS} (DSCP={DSCP} ECN={ECN}) total length={total_length} identification={identification} \
+        fragment_offset_flag {flgas_fragment_offset_byte} (flag={flag} fragment_offset={fragment_offset}) TTL={TTL} protocol={protocol}\
+        check sum={cksum} src_IP={src_IP} dst_IP={dst_IP}")
 
 
 counter = 1
@@ -83,8 +104,7 @@ while 1:
     print(f"\npacket {counter}: packet size: {get_eth_header(packet,ether_length)[4]}\
         Destination MAC: {format_mac(get_eth_header(packet,ether_length)[0])}\
         Source MAC: {format_mac(get_eth_header(packet,ether_length)[1])}\
-        Ether type: {get_eth_header(packet,ether_length)[2]}\n \
-        data: {get_eth_header(packet,ether_length)[3]}")
+        Ether type: {get_eth_header(packet,ether_length)[2]}\n")
     get_IP_header(get_eth_header(packet,ether_length)[3])
     dump_data(str(packet.hex()))
     print('\n')
