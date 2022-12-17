@@ -41,13 +41,13 @@ for port in range(1, ports):
         except socket.timeout:
             continue
         # print("info" + info)
-        log_info("open port: " + str(port) + "   " + "service: " + socket.getservbyport(port, protocol) + " banner: " + banner )
+        print("open port: " + str(port) + "   " + "service: " + socket.getservbyport(port, protocol) + " banner: " + banner )
         sock.close()
     except socket.timeout:
-        log_error("Timeout... Unable to connect to this address")
+        print("Timeout... Unable to connect to this address")
         quit()
     except Exception:
         pass
 
-log_notice(f"Complete. {ports} ports scanned")
+print(f"Complete. {ports} ports scanned")
 

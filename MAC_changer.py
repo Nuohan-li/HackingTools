@@ -1,7 +1,6 @@
 import subprocess
 import optparse
 import re
-from misc import *
 
 # to parse arguments
 parser = optparse.OptionParser()
@@ -25,15 +24,15 @@ ifconfig = subprocess.check_output(["ifconfig", options.interface])
 # search for the MAC address in ifconfig result & check if interface has MAC address
 MAC_search_result = re.search(r"\w\w:\w\w:\w\w:\w\w:\w\w:\w\w", ifconfig.decode('utf-8'))
 if not MAC_search_result:
-    log_error("This interface does not have MAC address")
+    print("This interface does not have MAC address")
 
 if not options.MAC:
-    log_error('Please enter a MAC address')
+    print('Please enter a MAC address')
 
 interface = options.interface
 MAC = options.MAC
 
-log_notice('Change MAC address of ' + interface + " to " + MAC)
+print('Change MAC address of ' + interface + " to " + MAC)
 
 # Python will run below commands; each element is a single word, prevents linux from reading ';'
 subprocess.call(["ifconfig", interface, "down"])
@@ -44,6 +43,6 @@ subprocess.call(["ifconfig", interface, "up"])
 current_ifconfig = subprocess.check_output(["ifconfig", options.interface])
 current_MAC = re.search(r"\w\w:\w\w:\w\w:\w\w:\w\w:\w\w", current_ifconfig.decode('utf-8'))
 if current_MAC.group(0).upper() == options.MAC.upper():
-    log_info('MAC address has been changed')
+    print('MAC address has been changed')
 else:
-    log_error('Error, MAC could not be changed')
+    print('Error, MAC could not be changed')

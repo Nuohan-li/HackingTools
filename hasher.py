@@ -1,5 +1,4 @@
 import hashlib
-from misc import *
 
 # script used to encrypt a password -> used to test password cracker 
 
@@ -28,4 +27,4 @@ elif hash_algo == "sha512":
     obj.update(string_to_hash.encode())
     print(f"SHA512: {obj.hexdigest()}")
 else:
-    log_error(f"Hashing algorithm {hash_algo} not supported")
+    print(f"Hashing algorithm {hash_algo} not supported")

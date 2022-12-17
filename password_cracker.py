@@ -2,7 +2,6 @@ from urllib.request import urlopen
 import hashlib
 import optparse
 import sys
-from misc import *
 
 parser = optparse.OptionParser()
 parser.add_option('-p', dest='hash_value', help="enter a hashed password")
@@ -10,11 +9,11 @@ parser.add_option('-a', dest="hash_algo", help="enter a hashing algorithm")
 (options, arg) = parser.parse_args()
 
 if not options.hash_value:
-    log_error("You must enter a hashed password to be cracked")
+    print("You must enter a hashed password to be cracked")
     sys.exit()
 
 if not options.hash_algo:
-    log_error("You must provide a hashing algorithm")
+    print("You must provide a hashing algorithm")
     sys.exit()
 
 hashed = options.hash_value
@@ -36,7 +35,7 @@ def check_password(password_list, hash_algo, hashed):
             password_hash.update(password.encode())
             hashguess = password_hash.hexdigest()
             if str(hashguess) == str(hashed):
-                log_info(f"Password matched! It is {str(password)}")
+                print(f"Password matched! It is {str(password)}")
                 return 1
     elif hash_algo == "sha1":
         for password in password_list.split('\n'):
@@ -44,7 +43,7 @@ def check_password(password_list, hash_algo, hashed):
             password_hash.update(password.encode())
             hashguess = password_hash.hexdigest()
             if str(hashguess) == str(hashed):
-                log_info(f"Password matched! It is {str(password)}")
+                print(f"Password matched! It is {str(password)}")
                 return 1
     elif hash_algo == "sha224":
         for password in password_list.split('\n'):
@@ -52,7 +51,7 @@ def check_password(password_list, hash_algo, hashed):
             password_hash.update(password.encode())
             hashguess = password_hash.hexdigest()
             if str(hashguess) == str(hashed):
-                log_info(f"Password matched! It is {str(password)}")
+                print(f"Password matched! It is {str(password)}")
                 return 1
     elif hash_algo == "sha256":
         for password in password_list.split('\n'):
@@ -60,7 +59,7 @@ def check_password(password_list, hash_algo, hashed):
             password_hash.update(password.encode())
             hashguess = password_hash.hexdigest()
             if str(hashguess) == str(hashed):
-                log_info(f"Password matched! It is {str(password)}")
+                print(f"Password matched! It is {str(password)}")
                 return 1
     elif hash_algo == "sha512":
         for password in password_list.split('\n'):
@@ -68,12 +67,12 @@ def check_password(password_list, hash_algo, hashed):
             password_hash.update(password.encode())
             hashguess = password_hash.hexdigest()
             if str(hashguess) == str(hashed):
-                log_info(f"Password matched! It is {str(password)}")
+                print(f"Password matched! It is {str(password)}")
                 return 1
     
 
 if check_password(password_list, hash_algo, hashed):
-    log_notice("Password matched successfully")
+    print("Password matched successfully")
 else:
-    log_notice("Provided password does not match any password in the list")
+    print("Provided password does not match any password in the list")
 

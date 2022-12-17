@@ -1,6 +1,5 @@
 from scapy.all import *
 import optparse
-from misc import *
 from packet_craft import *
 
 host_ip = ""
@@ -16,23 +15,23 @@ parser.add_option('-s', dest='load_size', help="specify the size of the payload"
 (options, arg) = parser.parse_args()
 
 if not options.target_ip:
-    log_error("You must provide target device's IP address")
+    print("You must provide target device's IP address")
     sys.exit()
 else: 
     target_ip = options.target_ip
 
 if not options.host_ip:
-    log_notice("No source IP provided, using host IP address")
+    print("No source IP provided, using host IP address")
 else: 
     host_ip = options.host_ip
 
 if not options.port:
-    log_notice("No port specified, default port will be used")
+    print("No port specified, default port will be used")
 else:
     port = options.port
 
 if not options.load_size:
-    log_notice("No size specified, default size will be used")
+    print("No size specified, default size will be used")
 else:
     load_size = options.load_size
 
@@ -45,5 +44,5 @@ try:
             print(f"Packets sent: {counter}", end='\r')
             counter += 1
 except KeyboardInterrupt:
-    log_info("Flooding stopped, exiting...")
+    print("Flooding stopped, exiting...")
     sys.exit()
