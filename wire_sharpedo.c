@@ -7,35 +7,65 @@
 #include <net/ethernet.h>
 #include <netinet/ether.h>
 
-// void print_protocol(int dec_protocol){
-//     char hex[100];
-//     int proto_index = 0;
-//     int index = 0;
-//     int quotient = dec_protocol;
-//     int remainder = 0;
-//     while(quotient != 0){
-//         remainder = quotient % 16;
-        
-//         // converting integer to char
-//         if(remainder < 10){
-//             hex[index] = remainder + 48;
-//         } else{
-//             hex[index] = remainder + 55;
-//         }
-//         quotient = quotient / 16;
-//         index++;
-//     }
-//     printf("0x");
-//     for(int i = index; i >= 0; i--){
-//         printf("%c", hex[i]);
-//     }
-// }
+void print_hex_protocol(int dec_protocol){
+    char hex[4];
+    if(dec_protocol <= 2457){
+        hex[3] = 48;
+    } 
+    int index = 0;
+    int quotient = dec_protocol;
+    int remainder = 0;
+    while(quotient != 0){
+        remainder = quotient % 16;
+        // converting integer to char
+        if(remainder < 10){
+            hex[index] = remainder + 48;
+        } else{
+            hex[index] = remainder + 55;
+        }
+        quotient = quotient / 16;
+        index++;
+    }
+    printf("Protocol not present in switch case:  ");
+    for(int i = index; i >= 0; i--){
+        printf("%c", hex[i]);
+    }    
+}
 
-char* get_protocol(int dec_protocol){
+char* get_ether_type(int dec_protocol){
     switch(dec_protocol){
         case 2048:
-            return "0x800 IPv4";
+            return "0x0800 IPv4";
             break;
+        case 2054:
+            return "0x0806 ARP";
+            break;
+        case 33024:
+            return "0x8100 VLAN tagged traffic";
+            break;
+        case 32821:
+            return "0x8035 Reversed ARP";
+            break;
+        case 34525:
+            return "0x86DD IPv6";
+            break;
+        case 34887:
+            return "0x8847 MPLS unicast";
+            break;
+        case 34888:
+            return "0x8848 MPLS multicast";
+            break;
+        case 34958:
+            return "0x888E EAPoL MKA";
+            break;
+        case 35020:
+            return "0x88CC LLDP";
+            break;
+        case 35045:
+            return "0x88E5 MACsec traffic";
+            break;
+        default:
+            print_hex_protocol(dec_protocol); 
     }
 }
 
@@ -69,7 +99,7 @@ int main(){
         printf("\n Ethernet Header \n");
         printf("\t| Source address: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n", eth->h_source[0],eth->h_source[1],eth->h_source[2],eth->h_source[3],eth->h_source[4],eth->h_source[5]);
         printf("\t| Destination address: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n", eth->h_dest[0],eth->h_dest[1],eth->h_dest[2],eth->h_dest[3],eth->h_dest[4],eth->h_dest[5]);
-        printf("\t| Protocol: %s\n", get_protocol(ntohs(eth->h_proto)));
+        printf("\t| Protocol: %s\n", get_ether_type(ntohs(eth->h_proto)));
         // printf("|-Source Address : %.2X-%.2X-%.2X-%.2X-%.2X-%.2X\n", eth->h_source[0],eth->h_source[1],eth->h_source[2],eth->h_source[3],eth->h_source[4],eth->h_source[5]);
     }
     
