@@ -7,6 +7,37 @@
 #include <net/ethernet.h>
 #include <netinet/ether.h>
 
+// void print_protocol(int dec_protocol){
+//     char hex[100];
+//     int proto_index = 0;
+//     int index = 0;
+//     int quotient = dec_protocol;
+//     int remainder = 0;
+//     while(quotient != 0){
+//         remainder = quotient % 16;
+        
+//         // converting integer to char
+//         if(remainder < 10){
+//             hex[index] = remainder + 48;
+//         } else{
+//             hex[index] = remainder + 55;
+//         }
+//         quotient = quotient / 16;
+//         index++;
+//     }
+//     printf("0x");
+//     for(int i = index; i >= 0; i--){
+//         printf("%c", hex[i]);
+//     }
+// }
+
+char* get_protocol(int dec_protocol){
+    switch(dec_protocol){
+        case 2048:
+            return "0x800 IPv4";
+            break;
+    }
+}
 
 int main(){
     // htons(ETH_P_ALL) => all protocols
@@ -38,7 +69,7 @@ int main(){
         printf("\n Ethernet Header \n");
         printf("\t| Source address: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n", eth->h_source[0],eth->h_source[1],eth->h_source[2],eth->h_source[3],eth->h_source[4],eth->h_source[5]);
         printf("\t| Destination address: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n", eth->h_dest[0],eth->h_dest[1],eth->h_dest[2],eth->h_dest[3],eth->h_dest[4],eth->h_dest[5]);
-        printf("\t| Protocol: %d\n", eth->h_proto);
+        printf("\t| Protocol: %s\n", get_protocol(ntohs(eth->h_proto)));
         // printf("|-Source Address : %.2X-%.2X-%.2X-%.2X-%.2X-%.2X\n", eth->h_source[0],eth->h_source[1],eth->h_source[2],eth->h_source[3],eth->h_source[4],eth->h_source[5]);
     }
     
