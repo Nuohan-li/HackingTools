@@ -8,6 +8,7 @@
 #include <netinet/ether.h>
 #include <netinet/ip.h>
 #include <netinet/ip6.h>
+#include <net/if_arp.h>
 #include <arpa/inet.h>
 
 // used to get source and destination IP address.
@@ -78,13 +79,44 @@ char* get_ether_type(int dec_protocol){
 }
 
 void print_IPv6_header(unsigned char* buffer){
-    struct ip6_hdr *ip6_hdr_ptr = (struct ip6_hdr*) (buffer + sizeof(struct ethhdr));
-    printf("\n IPv6 Header\n");
-    // first 4 bits of vfc is version as per 
+    struct ip6_hdr *ip6_hdr_ptr = (struct ip6_hdr*) (buffer + sizeof(struct ethhdr)); 
+
+    // converting IPv6 address into printable format 
+    char ipv6_src_addr[INET6_ADDRSTRLEN];
+    char ipv6_dst_addr[INET6_ADDRSTRLEN];
+    inet_ntop(AF_INET6,&(ip6_hdr_ptr->ip6_src), ipv6_src_addr, INET6_ADDRSTRLEN);
+    inet_ntop(AF_INET6,&(ip6_hdr_ptr->ip6_dst), ipv6_dst_addr, INET6_ADDRSTRLEN);
+    // first 4 bits of vfc is version 
     int vfc = ip6_hdr_ptr->ip6_ctlun.ip6_un2_vfc;
     int version = (vfc >> 4) & 0b00001111;
+    int traffic_class = vfc & 0b00001111;
+
+    printf("\n IPv6 Header\n");
+    printf("\t| vfc                   : %d\n", vfc);
     printf("\t| Version               : %d\n", version);
-    printf("\t| Flow                  : %d\n", ip6_hdr_ptr->ip6_ctlun.ip6_un1.ip6_un1_flow);
+    printf("\t| Flow                  : %d\n", ntohs(ip6_hdr_ptr->ip6_ctlun.ip6_un1.ip6_un1_flow));
+    printf("\t| Traffic Class         : %d\n", traffic_class);
+    printf("\t| Payload Length        : %d\n", ntohs(ip6_hdr_ptr->ip6_ctlun.ip6_un1.ip6_un1_plen));
+    printf("\t| Next Header           : %d\n", ip6_hdr_ptr->ip6_ctlun.ip6_un1.ip6_un1_nxt);
+    printf("\t| Hop Limit             : %d\n", ip6_hdr_ptr->ip6_ctlun.ip6_un1.ip6_un1_hlim);
+    printf("\t| Source Address        : %s\n", ipv6_src_addr);
+    printf("\t| Destination Address   : %s\n", ipv6_dst_addr);
+}
+
+void print_ARP_header(unsigned char* buffer){
+    struct arphdr *arp_hdr = (struct arphdr*) (buffer+ sizeof(struct ethhdr));
+    printf("\n ARP Fields\n");
+    printf("\t| Hardware Type        : %d\n", ntohs(arp_hdr->ar_hrd));
+    printf("\t| Protocol Type        : %d\n", arp_hdr->ar_pro);
+    printf("\t| Hardware Addr Len.   : %x\n", arp_hdr->ar_hln);
+    printf("\t| Protocol Length      : %x\n", arp_hdr->ar_pln);
+    if(ntohs(arp_hdr->ar_op) == 1){
+        printf("\t| ARP Opcode           : 1 request\n");
+    } else {
+        printf("\t| ARP Opcode           : 2 response\n");
+    }
+    // printf("\t| Sender MAC Addr.     : %s\n");
+    printf("this is an ARP packet");
 }
 
 void print_IP_header(unsigned char* buffer){
@@ -119,21 +151,25 @@ void print_packet(unsigned char* buffer){
     printf("\t| Source address        : %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n", eth->h_source[0],eth->h_source[1],eth->h_source[2],eth->h_source[3],eth->h_source[4],eth->h_source[5]);
     printf("\t| Destination address   : %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n", eth->h_dest[0],eth->h_dest[1],eth->h_dest[2],eth->h_dest[3],eth->h_dest[4],eth->h_dest[5]);
     printf("\t| Protocol              : %s\n", get_ether_type(ntohs(eth->h_proto)));
-    // if(ntohs(eth->h_proto) == 2054){
-    //     printf("\n ARP fields\n");
-        
-    // } 
-    if(ntohs(eth->h_proto) == 2048){
-        print_IP_header(buffer);
-    } else if(ntohs(eth->h_proto) == 34525){
-        print_IPv6_header(buffer);
-    }
-    // switch(ntohs(eth->h_proto)){
-    //     case 2048:
-    //         // struct iphdr *ip_hdr_ptr = (struct iphdr*)(buffer + sizeof(struct ethhdr));
-    //         print_IP_header(buffer);
-    //         break;
+
+    // if(ntohs(eth->h_proto) == 2048){
+    //     //print_IP_header(buffer);
+    // } else if(ntohs(eth->h_proto) == 34525){
+    //     print_IPv6_header(buffer);
     // }
+    switch(ntohs(eth->h_proto)){
+        case 2048:
+            print_IP_header(buffer);
+            break;
+        case 2054:
+            print_ARP_header(buffer);
+            break;
+        case 34525:
+            print_IPv6_header(buffer);
+            break;
+        default:
+            printf("%d not implemented yet", ntohs(eth->h_proto));
+    }
 }
 
 int main(){
