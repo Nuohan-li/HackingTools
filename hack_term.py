@@ -268,6 +268,10 @@ Hacking Tools
 - password_cracker   -- Crack a hashed password
 - MAC_changer        -- Change MAC address of an interface
 - syn_flood          -- Launch flooding attack  
+
+Network Tools
+- wiresharpedo       -- Sniff packets
+- dns_lookup         -- Return the IP address of a domain name
             """)
 
         case _:
