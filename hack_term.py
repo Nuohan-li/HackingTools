@@ -1,6 +1,7 @@
 import subprocess
 import signal
 
+# handles ctrl c
 def signal_handler(signum, frame):
     pass
     
