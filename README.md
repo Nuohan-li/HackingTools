@@ -5,6 +5,7 @@ Program functions
 - quit               -- exit program
 - exec_linux_command -- execute Linux command
 - list_cmd           -- print this menu 
+
 Hacking Tools
 - portscanner        -- Scan ports
 - ssh_brute_force    -- Brute force SSH connection
@@ -16,6 +17,7 @@ Hacking Tools
 - netscan            -- Scan the network
 - syn_flood          -- Launch flooding attack  
 - reverse_shell      -- Open reverse shell command interface
+
 Network Tools
 - wiresharpedo       -- Sniff packets
 - dns_lookup         -- Return the IP address of a domain name
