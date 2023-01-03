@@ -37,7 +37,7 @@ Program Functions:
         Execute Linux command from within this program    -exec_linux_command
     Execute linux command from the program 
 Hacking Tools
-*The arguments are only needed if the scripts are run directly instead of being run by this program.
+The arguments are only needed if the scripts are run directly
 
     - portscanner
     Scans the specified number of ports, by default it scans all ports
