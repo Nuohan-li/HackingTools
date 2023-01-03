@@ -1,5 +1,7 @@
 import subprocess
 import signal
+import os
+from ctypes import *
 
 # handles ctrl c
 def signal_handler(signum, frame):
@@ -33,15 +35,62 @@ print("""
 
 """)
 cmd_buffer = []
+
 while(True):
     cmd = input(">>> ")
 
     match cmd:
+        case "":
+            continue
+
+        # Program functionalities
+        case "list_cmd":
+            cmd_buffer.append("list_cmd")
+            print(""" 
+Program functions
+- help               -- detailed help menu
+- quit               -- exit program
+- exec_linux_command -- execute Linux command
+- list_cmd           -- print this menu 
+
+Hacking Tools
+- portscanner        -- Scan ports
+- ssh_brute_force    -- Brute force SSH connection
+- ftp_anonymous      -- Check if target supports anonymous FTP login
+- ftp_brute_force    -- Brute force FTP login
+- hasher             -- Hash a password
+- password_cracker   -- Crack a hashed password
+- MAC_changer        -- Change MAC address of an interface
+- netscan            -- Scan the network
+- syn_flood          -- Launch flooding attack  
+- reverse_shell      -- Open reverse shell command interface
+
+Network Tools
+- wiresharpedo       -- Sniff packets
+- dns_lookup         -- Return the IP address of a domain name
+- find_devices       -- List all network interfaces of the local machine
+            """)
+
         case "help":
             print(""" 
 Help menu:
+----------------------------------------------------------------------------------------------------------------------
+Program Functions:
+    -help
+        Display this help menu
+    
+    -list_cmd
+        Print a list of supported commands and a brief explanation 
 
-The arguments are only needed if the scripts are run directly instead of being run by this program.
+    -quit
+        Exit the program 
+    
+    -exec_linux_command
+        Execute Linux command from within this program    -exec_linux_command
+    Execute linux command from the program 
+
+Hacking Tools
+*The arguments are only needed if the scripts are run directly instead of being run by this program.
 
     - portscanner
     Scans the specified number of ports, by default it scans all ports
@@ -83,9 +132,11 @@ The arguments are only needed if the scripts are run directly instead of being r
         Mandatory arguments:
             -i: interface name
             -m: new MAC address
-    
-    -exec_linux_command
-    Execute linux command from the program 
+
+    -netscan
+    Scan the provided network for connected devices
+        Mandatory arguments:
+            -t: target network IP address
 
     -syn_flood
     Flood a device with garbage data
@@ -102,13 +153,39 @@ The arguments are only needed if the scripts are run directly instead of being r
             -i: Target machine's IP address
             -r: Router IP address
 
+Network Tools:
+    - wire_sharpedo
+        Captures network traffic received/sent from all network interfaces and print to the console
+    
+    - dns_lookup
+        Convert a domain name to its corresponding IP address, also IPv6 address if available
+        Mandatory argument
+            domain_name: domain name
+    
+    - find_devices
+        Find and print all network interfaces of the local machine
+        
     
             """)
-        
-        case "quit":
-            print("Exiting...")
-            exit()
 
+        case "quit":
+            exit()
+        
+        case "exec_linux_command":
+            cmd_buffer.append("exec_linux_command")
+            print("You can now enter Linux command, type quit to go back")
+            while(True):
+                cmd = input("Enter the linux command to execute: ")
+                if cmd == "quit":
+                    print("\nGoing back")
+                    break
+                elif cmd[:2] == "cd" and len(cmd) > 1:
+                    os.chdir(cmd[3:])
+                else:
+                    print(f"Command: {cmd.split()}")
+                    subprocess.call(cmd.split())
+                
+# hacking tools
         case "portscanner":
             print("portscanner is selected")
             cmd_buffer.append("portscanner")
@@ -139,7 +216,7 @@ The arguments are only needed if the scripts are run directly instead of being r
                     print("You must provide file location")
                 else: 
                     break
-            subprocess.call(['python', 'ssh_brute_force.py', '-i', str(host), '-f', str(file_location)])
+            subprocess.call(['python3', 'ssh_brute_force.py', '-i', str(host), '-f', str(file_location)])
 
         case "ftp_anonymous":
             print("Check if host host has FTP anonymous login enabled")
@@ -150,7 +227,7 @@ The arguments are only needed if the scripts are run directly instead of being r
                     print("You must provide target IP address")
                 else:
                     break
-            subprocess.call(['python', 'ftp_anonymous.py', '-i', str(host)])
+            subprocess.call(['python33', 'ftp_anonymous.py', '-i', str(host)])
 
         case "ftp_brute_force":
             print("FTP brute forcer selected")
@@ -167,12 +244,12 @@ The arguments are only needed if the scripts are run directly instead of being r
                     print("You must provide file location")
                 else: 
                     break
-            subprocess.call(['python', 'ftp_brute_force.py', '-i', str(host), '-f', str(file_location)])
+            subprocess.call(['python3', 'ftp_brute_force.py', '-i', str(host), '-f', str(file_location)])
 
         case "hasher":
             print("Password hasher selected")
             cmd_buffer.append("hasher")
-            subprocess.call(['python', 'hasher.py'])
+            subprocess.call(['python3', 'hasher.py'])
         
         case "password_cracker":
             print("Password cracker selected")
@@ -189,7 +266,7 @@ The arguments are only needed if the scripts are run directly instead of being r
                     print("You must provide a hashing algorithm")
                 else: 
                     break
-            subprocess.call(['python', 'password_cracker.py', '-p', hashed, '-a', hash_algo])
+            subprocess.call(['python3', 'password_cracker.py', '-p', hashed, '-a', hash_algo])
         
         case "MAC_changer":
             print("interface MAC address changer selected")
@@ -206,19 +283,18 @@ The arguments are only needed if the scripts are run directly instead of being r
                     print("You must provide a new MAC address")
                 else: 
                     break
-            subprocess.call(['python', 'MAC_changer.py', '-i', interface, '-m', mac])
+            subprocess.call(['python3', 'MAC_changer.py', '-i', interface, '-m', mac])
         
-        case "exec_linux_command":
-            cmd_buffer.append("exec_linux_command")
-            print("You can now enter Linux command, type quit to go back")
+        case "netscan":
+            print("Network scanner selected")
+            cmd_buffer.append("netscan")
             while(True):
-                cmd = input("Enter the linux command to execute: ")
-                if cmd == "quit":
-                    print("\nGoing back")
+                prefix = input(">>> Enter IP address of a network to scan: ")
+                if prefix == "":
+                    print("You must provide an IP address")
+                else: 
                     break
-                else:
-                    subprocess.call(cmd.split())
-                
+            subprocess.call(['python3', 'netscan.py', '-t', prefix])
         
         case "syn_flood":
             cmd_buffer.append("syn_flood")
@@ -250,34 +326,29 @@ The arguments are only needed if the scripts are run directly instead of being r
                     break
 
             subprocess.call(['python', 'syn_flood.py', '-i', target_ip, '-r', router_ip])
+        
+        case "reverse_shell":
+            print("not supported yet")
+        
+# Network tools
+        # TODO: using ctypes to call the function
+        case "wire_sharpedo":
+            subprocess.call(["./wire_sharpedo"])
 
-        case "list_cmd":
-            cmd_buffer.append("list_cmd")
-            print(""" 
-Program functions
-- help               -- detailed help menu
-- quit               -- exit program
-- exec_linux_command -- execute Linux command
-- list_cmd           -- print this menu 
-
-Hacking Tools
-- portscanner        -- Scan ports
-- ssh_brute_force    -- Brute force SSH connection
-- ftp_anonymous      -- Check if target supports anonymous FTP login
-- ftp_brute_force    -- Brute force FTP login
-- hasher             -- Hash a password
-- password_cracker   -- Crack a hashed password
-- MAC_changer        -- Change MAC address of an interface
-- syn_flood          -- Launch flooding attack  
-- reverse_shell      -- Open reverse shell command interface
-
-Network Tools
-- wiresharpedo       -- Sniff packets
-- dns_lookup         -- Return the IP address of a domain name
-            """)
-
+        case "find_devices":
+            subprocess.call(['./network_tools/find_dev'])
+        
+        case "dns_lookup":
+            while(True):
+                domain_name = input(">>> Enter a domain name: ")
+                if domain_name == "":
+                    print("You must provide a domain name")
+                else:
+                    break
+            subprocess.call(['./network_tools/dns_lookup', domain_name])
+        
         case _:
-            print("This command does not exist, type help to see a list of commands")
+            print("This command does not exist, type list_cmd to see a list of commands")
 
 
                 

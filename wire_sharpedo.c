@@ -11,6 +11,7 @@
 #include <netinet/udp.h>
 #include <netinet/tcp.h>
 #include <net/if_arp.h>
+#include <net/if.h>
 #include <arpa/inet.h>
 
 void packet_dump(unsigned char*, int);
@@ -247,8 +248,8 @@ void print_IP_header(unsigned char* buffer){
 void print_packet(unsigned char* buffer, int buffer_len){
     struct ethhdr *eth = (struct ethhdr*)buffer;
     printf("\n Ethernet Header \n");
-    printf("\t| Source address        : %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n", eth->h_source[0],eth->h_source[1],eth->h_source[2],eth->h_source[3],eth->h_source[4],eth->h_source[5]);
-    printf("\t| Destination address   : %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n", eth->h_dest[0],eth->h_dest[1],eth->h_dest[2],eth->h_dest[3],eth->h_dest[4],eth->h_dest[5]);
+    printf("\t| Source address        : %02X:%02X:%02X:%02X:%02X:%02X\n", eth->h_source[0],eth->h_source[1],eth->h_source[2],eth->h_source[3],eth->h_source[4],eth->h_source[5]);
+    printf("\t| Destination address   : %02X:%02X:%02X:%02X:%02X:%02X\n", eth->h_dest[0],eth->h_dest[1],eth->h_dest[2],eth->h_dest[3],eth->h_dest[4],eth->h_dest[5]);
     printf("\t| Protocol              : %s\n", get_ether_type(ntohs(eth->h_proto)));
 
     // if(ntohs(eth->h_proto) == 2048){
