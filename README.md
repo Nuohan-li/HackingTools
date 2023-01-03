@@ -24,6 +24,7 @@ Network Tools
 Details:
 ----------------------------------------------------------------------------------------------------------------------
 Program Functions:
+
     -help
         Display this help menu
     
@@ -37,6 +38,7 @@ Program Functions:
     Execute linux command from the program 
 Hacking Tools
 *The arguments are only needed if the scripts are run directly instead of being run by this program.
+
     - portscanner
     Scans the specified number of ports, by default it scans all ports
         Mandatory arguments:
@@ -93,6 +95,7 @@ Hacking Tools
             -i: Target machine's IP address
             -r: Router IP address
 Network Tools:
+
     - wire_sharpedo
         Captures network traffic received/sent from all network interfaces and print to the console
     
