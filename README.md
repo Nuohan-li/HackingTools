@@ -48,6 +48,7 @@ Hacking Tools
         Optional arguments:
             -p: Protocol that you wish to scan for, if not specified, TCP will be selected
             -r: Number of ports to scan, if not specified, all ports will be scanned
+            
     -ssh_brute_force
     Brute force a SSH session using passwords from the file provided by the user
         Mandatory arguments:
